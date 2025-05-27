@@ -65,7 +65,7 @@ def generate_launch_description():
         name='teleop_twist_keyboard',
         output='screen',
         prefix='xterm -e',  # Launches in a new terminal window
-        remappings=[('/cmd_vel', '/your_robot_diff_drive_controller/cmd_vel_unstamped')] # Or just '/cmd_vel'
+        # remappings=[('/cmd_vel', '/cmd_vel')] # Or just '/cmd_vel'
         # IMPORTANT: Check your robot's differential drive plugin configuration.
         # It might subscribe to /cmd_vel or a namespaced topic like /diff_drive_controller/cmd_vel
         # or /your_robot_name/cmd_vel. Adjust the remapping accordingly.

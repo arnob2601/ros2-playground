@@ -1,0 +1,176 @@
+<?xml version="1.0" ?>
+<sdf version="1.7">
+  <world name="racetrack_world">
+    <physics type="ode">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+    </physics>
+    <plugin
+      filename="libgazebo_ros_init.so"
+      name="gazebo_ros_init">
+    </plugin>
+    <plugin
+      filename="libgazebo_ros_factory.so"
+      name="gazebo_ros_factory">
+    </plugin>
+
+    <!-- Lighting -->
+    <light name="sun" type="directional">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+
+    <!-- Ground Plane -->
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>100</mu>
+                <mu2>50</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Grey</name>
+            </script>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Racetrack Walls -->
+    <model name="racetrack">
+      <static>true</static>
+      <pose>0 0 0 0 0 0</pose> <!-- Overall pose of the track model -->
+
+      <!-- Define track dimensions -->
+      <!-- Inner dimensions of the track path -->
+      <!-- Let's say track is 20m long, 10m wide internally -->
+      <!-- Wall thickness 0.5m, height 1m -->
+      <!-- Corner "cut-off" length (hypotenuse of the corner triangle) approx 2m -->
+
+      <!-- Wall parameters -->
+      <link name="wall_straight_1">
+        <pose>0 5.25 0.5 0 0 0</pose> <!-- y = (10/2) + (0.5/2) -->
+        <collision name="collision">
+          <geometry><box><size>16 0.5 1</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>16 0.5 1</size></box></geometry>
+          <material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/Red</name></script></material>
+        </visual>
+      </link>
+
+      <link name="wall_straight_2">
+        <pose>0 -5.25 0.5 0 0 0</pose> <!-- y = -(10/2) - (0.5/2) -->
+        <collision name="collision">
+          <geometry><box><size>16 0.5 1</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>16 0.5 1</size></box></geometry>
+          <material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/Red</name></script></material>
+        </visual>
+      </link>
+
+      <link name="wall_straight_3">
+        <pose>9.25 0 0.5 0 0 1.5707</pose> <!-- x = (16/2) + (0.5/2) + adjust for corner, rotate 90 deg -->
+        <collision name="collision">
+          <geometry><box><size>7 0.5 1</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>7 0.5 1</size></box></geometry>
+          <material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/Red</name></script></material>
+        </visual>
+      </link>
+
+      <link name="wall_straight_4">
+        <pose>-9.25 0 0.5 0 0 1.5707</pose> <!-- x = -(16/2) - (0.5/2) + adjust for corner, rotate 90 deg -->
+        <collision name="collision">
+          <geometry><box><size>7 0.5 1</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>7 0.5 1</size></box></geometry>
+          <material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/Red</name></script></material>
+        </visual>
+      </link>
+
+      <!-- Corner Walls (approximating smoothed edges) -->
+      <!-- Length of corner wall segment approx 3.53m (hypotenuse for a 2.5x2.5 cut) -->
+      <!-- Center of corner wall segment is at ~ +/-8m, +/-3.75m with 45 deg rotation -->
+      <link name="corner_1"> <!-- Top-Right -->
+        <pose>8.0 3.75 0.5 0 0 -0.785398</pose> <!-- 45 degrees = pi/4 = 0.785398 rad -->
+        <collision name="collision">
+          <geometry><box><size>3.53 0.5 1</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>3.53 0.5 1</size></box></geometry>
+          <material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/Red</name></script></material>
+        </visual>
+      </link>
+
+      <link name="corner_2"> <!-- Top-Left -->
+        <pose>-8.0 3.75 0.5 0 0 0.785398</pose>
+        <collision name="collision">
+          <geometry><box><size>3.53 0.5 1</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>3.53 0.5 1</size></box></geometry>
+          <material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/Red</name></script></material>
+        </visual>
+      </link>
+
+      <link name="corner_3"> <!-- Bottom-Left -->
+        <pose>-8.0 -3.75 0.5 0 0 -0.785398</pose> <!-- Rotated by -45 deg from straight segment, then placed -->
+        <collision name="collision">
+          <geometry><box><size>3.53 0.5 1</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>3.53 0.5 1</size></box></geometry>
+          <material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/Red</name></script></material>
+        </visual>
+      </link>
+
+      <link name="corner_4"> <!-- Bottom-Right -->
+        <pose>8.0 -3.75 0.5 0 0 0.785398</pose> <!-- Rotated by 45 deg from straight segment, then placed -->
+        <collision name="collision">
+          <geometry><box><size>3.53 0.5 1</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>3.53 0.5 1</size></box></geometry>
+          <material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/Red</name></script></material>
+        </visual>
+      </link>
+
+    </model>
+  </world>
+</sdf>
